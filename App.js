@@ -1,44 +1,45 @@
-import React, { Component } from 'react';
-import { View, Text, Button, TextInput, Image, StyleSheet } from 'react-native';
-import { NavigationContainer, TabActions } from '@react-navigation/native';
-import { createStackNavigator, StackView } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import {
+  createAppContainer, 
+  createSwitchNavigator
+} from 'react-navigation'
 
-import Gallery from './Components/ImageGallery';
-import Feed from './Components/Feed';
-import Camera from './Components/Camera';
+import LogInScreen from './screens/LogInScreen';
+import DashboardScreen from './screens/DashboardScreen';
+import LoadingScreen from './screens/LoadingScreen';
 
-const Stack = createStackNavigator();
-const BottomTabs = createBottomTabNavigator();
-
-export default class App extends Component {
-
-    createHomeStack = () => 
-    <Stack.Navigator>
-        <Stack.Screen name="Latest News" component={Feed} />
-    </Stack.Navigator>
-
-    render() {
-        return (
-            <NavigationContainer>
-                <BottomTabs.Navigator>
-                    <BottomTabs.Screen name="Home" children={this.createHomeStack} 
-                    options={{tabBarIcon: ({ color }) => (
-                        <Ionicons name="ios-home" size={25} color={color} />
-                      )}}/>
-                    <BottomTabs.Screen name="Camera" component={Camera} 
-                    options={{
-                        tabBarIcon: ({ color }) => {
-                          return <Ionicons name={'ios-camera'} size={30} color={color} />;
-                        },
-                      }}/>
-                    <BottomTabs.Screen name="Gallery" component={Gallery} 
-                    options={{tabBarIcon: ({ color }) => (
-                        <Ionicons name="ios-images" size={25} color={color} />
-                      )}}/>
-                </BottomTabs.Navigator>
-            </NavigationContainer>
-        )
-    }
+import firebase from 'firebase';
+import { firebaseConfig } from './config';
+try {
+  firebase.initializeApp(firebaseConfig);
+} catch (err) {
+  if (!/already exits/.test(err.message)) {
+    console.error('Firebase initialization error', err.stack)
+  }
 }
+
+
+export default function App() {
+  return (
+    <AppNavigator />
+  );
+}
+
+const AppSwitchNavigator = createSwitchNavigator({
+  LoadingScreen: LoadingScreen,
+  LogInScreen: LogInScreen,
+  DashboardScreen: DashboardScreen
+})
+
+const AppNavigator = createAppContainer(AppSwitchNavigator);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+

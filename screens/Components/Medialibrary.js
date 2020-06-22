@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import {
-    Text, View,
+    Text, View, Image,
     StyleSheet, TouchableWithoutFeedback,
     Dimensions, Modal, SafeAreaView, FlatList
 } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import * as Permissions from 'expo-permissions';
+import * as FileSystem from 'expo-file-system';
 
 import ImageElement from './ImageElement'
 
@@ -32,17 +33,21 @@ export default class ImageGallery extends Component {
         await Permissions.askAsync(Permissions.AUDIO_RECORDING);
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
     }
+    async componentDidMount() {
+
+    }
 
     showPhoto = async () => {
         const album = await MediaLibrary.getAlbumAsync('Expo');
         const photosTemp = await MediaLibrary.getAssetsAsync({ album: album })
         const array = photosTemp.assets.map(asset => ({
-            ...asset,
+            ...asset,  
             type: asset.mediaType,
             timestamp: asset.creationTime,
             selected: false
         }))
-        this.setState({ modalImage: photosTemp });
+       const uriTest = array[0].uri;
+       this.setState({modalImages: uriTest});
     }
 
     setModalVisible(visible, imageKey) {
@@ -71,22 +76,8 @@ export default class ImageGallery extends Component {
 
         return (
             <SafeAreaView style={styles.container} >
-                <Modal
-                    style={styles.modal}
-                    animationType={'fade'}
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => { }}>
-                    <View style={styles.modal}>
-                        <Text style={styles.text} onPress={() => { this.setModalVisible(false) }}>
-                            Close
-                        </Text>
-                        <ImageElement imgsource={this.state.modalImage} />
-                    </View>
-
-                </Modal>
-
-                {images}
+                <Image 
+                source={{ uri: "file:///storage/emulated/0/Expo/e9e0a9b0-8cfd-411b-a7f2-ddf8a6da7d04.jpg"}}/>
             </SafeAreaView>
         );
     }

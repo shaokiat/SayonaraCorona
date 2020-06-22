@@ -31,14 +31,24 @@ export default class Camera extends Component {
             }
             this.setState({ imageSelected: { localUri: launchCamera.uri } });
             const asset = await MediaLibrary.createAssetAsync(launchCamera.uri);
-            MediaLibrary.createAlbumAsync('Expo', asset)
-                .then(() => {
-                    console.log('Album created!');
-                })
-                .catch(error => {
-                    console.log('err', error);
-                });
-
+            const albumExist = await MediaLibrary.getAlbumAsync('Thermometer records');
+            if (albumExist == null) {
+                MediaLibrary.createAlbumAsync('Thermometer records', asset)
+                    .then(() => {
+                        console.log('Album created!');
+                    })
+                    .catch(error => {
+                        console.log('err', error);
+                    });
+            } else {
+                MediaLibrary.addAssetsToAlbumAsync(asset, albumExist.id, false)
+                    .then(() => {
+                        console.log('Photo added!');
+                    })
+                    .catch(error => {
+                        console.log('err', error);
+                    });
+            }
         }
 
         if (this.state.imageSelected !== null) {
