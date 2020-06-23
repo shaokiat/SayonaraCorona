@@ -42,5 +42,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-//try clone
