@@ -10,7 +10,7 @@ import DashboardScreen from './screens/DashboardScreen';
 import LoadingScreen from './screens/LoadingScreen';
 
 import firebase from 'firebase';
-import { firebaseConfig } from './config';
+import { firebaseConfig } from './configure.js';
 try {
   firebase.initializeApp(firebaseConfig);
 } catch (err) {

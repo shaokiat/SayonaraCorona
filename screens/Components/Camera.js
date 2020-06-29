@@ -14,7 +14,7 @@ export default class Camera extends Component {
     state = {
         imageSelected: null,
     }
-    render() {
+    render() { 
 
         openCameraAsync = async () => {
             let permissionCamera = await ImagePicker.requestCameraPermissionsAsync();

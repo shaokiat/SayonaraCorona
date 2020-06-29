@@ -19,8 +19,8 @@ class LoadingScreen extends Component {
                 if (user) {
                     this.props.navigation.navigate('DashboardScreen');
                 } else {
-                    this.props.navigation.navigate('DashboardScreen');
-                    // this.props.navigation.navigate('LogInScreen');
+                    // this.props.navigation.navigate('DashboardScreen');
+                    this.props.navigation.navigate('LogInScreen');
                 }
             }.bind(this)
         )
