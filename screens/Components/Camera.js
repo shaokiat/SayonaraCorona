@@ -8,29 +8,64 @@ import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
 import { ActionSheet, Root } from 'native-base';
 
+const API_KEY = 'AIzaSyC0g89TtZ3IRxhlzEb2fnwbrzGSe5AmJKk';
+const API_URL = `https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`
+
+async function callGoogleVisionAsync(image) {
+    const body = {
+        requests: [
+            {
+                image: {
+                    content: image,
+                },
+                features: [
+                    { type: 'DOCUMENT_TEXT_DETECTION', maxResults: 1 }
+                ],
+                "imageContext": {
+                    "languageHints": ["en-t-i0-handwrit"]
+                }
+            },
+        ],
+    };
+
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+    });
+    const parsed = await response.json();
+
+    console.log(parsed);
+    return parsed.responses[0].textAnnotations[0].description;
+}
 
 export default class Camera extends Component {
-
     state = {
         imageSelected: null,
+        status: null
     }
-    render() { 
-
+    render() {
         openCameraAsync = async () => {
+
             let permissionCamera = await ImagePicker.requestCameraPermissionsAsync();
 
             if (permissionCamera.granted === false) {
                 alert("Permission to access camera required!");
                 return;
             }
+            const { cancelled, uri, base64 } = await ImagePicker.launchCameraAsync({
+                base64: true,
+            });
 
-            let launchCamera = await ImagePicker.launchCameraAsync();
-
-            if (launchCamera.cancelled === true) {
+            if (cancelled === true) {
                 return;
             }
-            this.setState({ imageSelected: { localUri: launchCamera.uri } });
-            const asset = await MediaLibrary.createAssetAsync(launchCamera.uri);
+            this.setState({ imageSelected: { localUri: uri } });
+            this.setState({ status: 'Loading...' })
+            const asset = await MediaLibrary.createAssetAsync(uri);
             const albumExist = await MediaLibrary.getAlbumAsync('Thermometer records');
             if (albumExist == null) {
                 MediaLibrary.createAlbumAsync('Thermometer records', asset)
@@ -49,6 +84,13 @@ export default class Camera extends Component {
                         console.log('err', error);
                     });
             }
+            try {
+                const result = await callGoogleVisionAsync(base64)
+                this.setState({ status: result })
+            } catch (error) {
+                console.log(error);
+                this.setState({ status: `Error: ${error.message}` });
+            }
         }
 
         if (this.state.imageSelected !== null) {
@@ -58,6 +100,7 @@ export default class Camera extends Component {
                         source={{ uri: this.state.imageSelected.localUri }}
                         style={styles.thumbnail}
                     />
+                    <Text>{this.state.status}</Text>
                     <TouchableOpacity onPress={() => this.setState({ imageSelected: null })}>
                         <Text style={styles.button}>Back</Text>
                     </TouchableOpacity>
@@ -74,8 +117,7 @@ export default class Camera extends Component {
                         style={styles.logo} />
                     <Text style={styles.instructions}>
                         To upload a temperature reading, press button below!
-        </Text>
-
+                    </Text>
                     <TouchableOpacity onPress={() => openCameraAsync()} style={styles.button}>
                         <Text style={styles.buttonText}>Upload Temperature</Text>
                     </TouchableOpacity>
