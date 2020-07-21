@@ -2,11 +2,12 @@ import React, { Component, useState } from 'react';
 import {
     Image, Text, View,
     StyleSheet, TextInput, TouchableOpacity,
-    Dimensions, Modal
+    Dimensions, Modal, Alert
 } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
 import { ActionSheet, Root } from 'native-base';
+import DialogInput from 'react-native-dialog-input';
 
 const API_KEY = 'AIzaSyC0g89TtZ3IRxhlzEb2fnwbrzGSe5AmJKk';
 const API_URL = `https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`
@@ -45,8 +46,15 @@ async function callGoogleVisionAsync(image) {
 export default class Camera extends Component {
     state = {
         imageSelected: null,
-        status: null
+        status: null,
+        isAlertVisible: false
     }
+
+    submit(inputText) {
+        console.log(inputText);
+        this.setState({ isAlertVisible: false })
+    }
+
     render() {
         openCameraAsync = async () => {
 
@@ -89,35 +97,62 @@ export default class Camera extends Component {
                 this.setState({ status: result })
             } catch (error) {
                 console.log(error);
-                this.setState({ status: `Error: ${error.message}` });
+                this.setState({ status: `Reading not found. Please manually key in your temperature.` });
             }
         }
 
         if (this.state.imageSelected !== null) {
             return (
-                <View style={styles.container}>
+                <View style={styles.resultscontainer}>
                     <Image
                         source={{ uri: this.state.imageSelected.localUri }}
                         style={styles.thumbnail}
                     />
-                    <Text>{this.state.status}</Text>
-                    <TouchableOpacity onPress={() => this.setState({ imageSelected: null })}>
-                        <Text style={styles.button}>Back</Text>
-                    </TouchableOpacity>
-
+                    <View style={styles.temperatureview}>
+                        <Text style={styles.instructions}>{this.state.status}</Text>
+                        <Text style={styles.stepinstructions}>If above temperature is wrong, press "Key In" to manually enter your temperature.</Text>
+                        <Text style={styles.stepinstructions}>Else, press "Save" to save your temperature reading.</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ paddingRight: 20 }}>
+                            <TouchableOpacity onPress={() => this.setState({ imageSelected: null })}>
+                                <Text style={styles.button}>Save</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ paddingLeft: 20 }}>
+                            <TouchableOpacity onPress={() => this.setState({ isAlertVisible: true })} >
+                                <Text style={styles.button}>Key In</Text>
+                            </TouchableOpacity>
+                            <DialogInput isDialogVisible={this.state.isAlertVisible}
+                                title={"Corrected Temperature Readings"}
+                                message={"Enter your temperature"}
+                                hintInput={"Measured Temperature"}
+                                submitInput={
+                                    (inputText) => {this.setState ({status: inputText, isAlertVisible: false})}
+                                }
+                                closeDialog={() => this.setState( {isAlertVisible: false})}>
+                            </DialogInput>
+                        </View>
+                    </View>
                 </View>
             );
         };
 
         return (
             <Root>
-                <View style={styles.container}>
+                <View style={styles.instructionscontainer}>
+
                     <Image
                         source={require('../assets/splash.png')}
                         style={styles.logo} />
                     <Text style={styles.instructions}>
                         To upload a temperature reading, press button below!
                     </Text>
+                    <Text style={styles.instructions}>
+                        To ensure that the reading is accurate:
+                    </Text>
+                    <Text style={styles.instructions}>Ensure no other words or numbers are present in the background and the foreground.</Text>
+                    <Text style={styles.instructions}>Ensure that the image taken is sharp.</Text>
                     <TouchableOpacity onPress={() => openCameraAsync()} style={styles.button}>
                         <Text style={styles.buttonText}>Upload Temperature</Text>
                     </TouchableOpacity>
@@ -129,11 +164,17 @@ export default class Camera extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    instructionscontainer: {
         flex: 1,
         backgroundColor: 'white',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+    },
+    resultscontainer: {
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 1
     },
     logo: {
         width: 305,
@@ -160,5 +201,14 @@ const styles = StyleSheet.create({
         width: 300,
         height: 500,
         resizeMode: 'contain'
+    },
+    stepinstructions: {
+        color: '#888',
+        fontSize: 12,
+        marginHorizontal: 40,
+        marginBottom: 20,
+    },
+    temperatureview: {
+        paddingBottom: 10
     }
 });
