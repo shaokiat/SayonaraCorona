@@ -32,7 +32,8 @@ export default class ImageGallery extends Component {
     getData = () => {
         MediaLibrary.getAlbumAsync('Thermometer records').then(album => {
             MediaLibrary.getAssetsAsync({ album: album }).then(photosTemp => {
-                const array = photosTemp.assets.map(asset => ({
+                // android requires reverse to show latest pic at the top
+                const array = photosTemp.assets.reverse().map(asset => ({
                     ...asset,
                     type: asset.mediaType,
                     timestamp: asset.creationTime,
@@ -54,7 +55,6 @@ export default class ImageGallery extends Component {
     setModalVisible(visible, imageId) {
         let image = this.state.data.filter((data) => data.id == imageId)[0];
         this.setState({ modalImage: image == undefined ? undefined : image.uri });
-        // this.setState({ curr: this.state.date[imageKey] == undefined ? undefined : this.state.date[imageKey].toString() });
         this.setState({ modalVisible: visible });
 
     }
@@ -64,6 +64,8 @@ export default class ImageGallery extends Component {
     }
 
     renderItem(item) {
+        console.log(item);
+        console.log(item.timestamp);
         const date = new Date(item.timestamp);
         return (
             <TouchableWithoutFeedback
@@ -71,7 +73,7 @@ export default class ImageGallery extends Component {
                 onPress={() => { this.setModalVisible(true, item.id) }}>
                 <View style={styles.listView}>
                     <ImageElement imgsource={{ uri: item.uri }}></ImageElement>
-                    <Text style={styles.description}>{date.toString()}</Text>
+                    <Text style={styles.description}>{item.reading && date.toString()}</Text>
                 </View>
             </TouchableWithoutFeedback>
         );
