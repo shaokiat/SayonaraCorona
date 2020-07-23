@@ -39,10 +39,9 @@ async function callGoogleVisionAsync(image) {
     });
     const parsed = await response.json();
 
-    // console.log(parsed);
+    console.log(parsed);
     return parsed.responses[0].textAnnotations[0].description;
 }
-
 
 export default class Camera extends Component {
     state = {
@@ -74,9 +73,7 @@ export default class Camera extends Component {
             }
             this.setState({ imageSelected: { localUri: uri } });
             this.setState({ status: 'Loading...' })
-            let asset = await MediaLibrary.createAssetAsync(uri);
-            // asset['reading'] = 10;
-            console.log(asset);
+            const asset = await MediaLibrary.createAssetAsync(uri);
             const albumExist = await MediaLibrary.getAlbumAsync('Thermometer records');
             if (albumExist == null) {
                 MediaLibrary.createAlbumAsync('Thermometer records', asset)
@@ -96,9 +93,6 @@ export default class Camera extends Component {
                     });
             }
             try {
-
-                this.uploadImage(uri, asset.filename); 
-
                 const result = await callGoogleVisionAsync(base64)
                 this.setState({ status: result })
             } catch (error) {
