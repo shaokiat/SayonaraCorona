@@ -33,7 +33,7 @@ export default class ImageGallery extends Component {
         MediaLibrary.getAlbumAsync('Thermometer records').then(album => {
             MediaLibrary.getAssetsAsync({ album: album }).then(photosTemp => {
                 // android requires reverse to show latest pic at the top
-                const array = photosTemp.assets.reverse().map(asset => ({
+                const array = photosTemp.assets.map(asset => ({
                     ...asset,
                     type: asset.mediaType,
                     timestamp: asset.creationTime,
