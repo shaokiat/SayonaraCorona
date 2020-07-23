@@ -148,11 +148,14 @@ export default class Camera extends Component {
                     <Text style={styles.instructions}>
                         To upload a temperature reading, press button below!
                     </Text>
+                    <View style={{alignContent: 'center'}}>
                     <Text style={styles.instructions}>
                         To ensure that the reading is accurate:
                     </Text>
-                    <Text style={styles.instructions}>Ensure no other words or numbers are present in the background and the foreground.</Text>
-                    <Text style={styles.instructions}>Ensure that the image taken is sharp.</Text>
+                    
+                    <Text style={styles.instructions}>1. Ensure no other words or numbers are present in the background and the foreground.</Text>
+                    <Text style={styles.instructions}>2. Ensure that the image taken is sharp.</Text>
+                    </View>
                     <TouchableOpacity onPress={() => openCameraAsync()} style={styles.button}>
                         <Text style={styles.buttonText}>Upload Temperature</Text>
                     </TouchableOpacity>
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
-        flexShrink: 1
+        flex: 1
     },
     logo: {
         width: 305,
@@ -199,7 +202,7 @@ const styles = StyleSheet.create({
     },
     thumbnail: {
         width: 300,
-        height: 500,
+        height: 400,
         resizeMode: 'contain'
     },
     stepinstructions: {
@@ -209,6 +212,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     temperatureview: {
-        paddingBottom: 10
+        paddingTop: 20
     }
 });
