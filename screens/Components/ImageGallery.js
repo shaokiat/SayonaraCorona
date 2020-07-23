@@ -64,8 +64,6 @@ export default class ImageGallery extends Component {
     }
 
     renderItem(item) {
-        console.log(item);
-        console.log(item.timestamp);
         const date = new Date(item.timestamp);
         return (
             <TouchableWithoutFeedback
@@ -73,7 +71,7 @@ export default class ImageGallery extends Component {
                 onPress={() => { this.setModalVisible(true, item.id) }}>
                 <View style={styles.listView}>
                     <ImageElement imgsource={{ uri: item.uri }}></ImageElement>
-                    <Text style={styles.description}>{item.reading && date.toString()}</Text>
+                    <Text style={styles.description}>{date.toString()}</Text>
                 </View>
             </TouchableWithoutFeedback>
         );
