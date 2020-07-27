@@ -2,7 +2,7 @@
 
 Orbital2020 Project by Samuel and Shao Kiat
 
-[Final Milestone & Project Documentation](https://docs.google.com/document/d/17kcGN9nmWRgwjW9cIxtJt8gULmgOvxlqO_rXsvwpTis/edit?usp=sharing)
+**[Final Milestone & Project Documentation](https://docs.google.com/document/d/17kcGN9nmWRgwjW9cIxtJt8gULmgOvxlqO_rXsvwpTis/edit?usp=sharing)**
 
 [Detailed User Guide](https://drive.google.com/file/d/129QgIec8UuqBs4DBVO1vycwtyXLl7fFC/view?usp=sharing)
 
